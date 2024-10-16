@@ -1,87 +1,115 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/post_provider.dart';
 
-class PostFormScreen extends StatefulWidget {
-  const PostFormScreen({Key? key}) : super(key: key);
+import '../providers/form_provider.dart';
 
-  @override
-  _PostFormScreenState createState() => _PostFormScreenState();
-}
 
-class _PostFormScreenState extends State<PostFormScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final Map<String, String> _formData = {};
+class DynamicFormPage extends StatelessWidget {
+  final List apiResponse;
 
-  @override
-  void initState() {
-    super.initState();
-    Provider.of<PostProvider>(context, listen: false).fetchPosts();
-  }
+  DynamicFormPage({required this.apiResponse});
 
   @override
   Widget build(BuildContext context) {
-    final postProvider = Provider.of<PostProvider>(context);
-
-    if (postProvider.isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (postProvider.hasError) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Error: ${postProvider.errorMessage}'),
-              ElevatedButton(
-                onPressed: () {
-                  postProvider.fetchPosts();
-                },
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
+    return ChangeNotifierProvider(
+      create: (context) => FormProvider(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Dynamic Form'),
         ),
-      );
-    }
+        body: Consumer<FormProvider>(
+          builder: (context, formProvider, child) {
+            formProvider.processApiResponse(apiResponse); // Call the provider to process API response
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Dynamic Form')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              ...postProvider.posts.map((post) {
-                return TextFormField(
-                  decoration: InputDecoration(labelText: post.title),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'This field is required';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _formData[post.title] = value!;
-                  },
-                );
-              }).toList(),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    postProvider.submitForm(_formData);
-                  }
-                },
-                child: const Text('Submit'),
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: formProvider.formKey,
+                child: Column(
+                  children: [
+                    // Dynamic title field
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: formProvider.isTitleSwitchOn
+                          ? SwitchListTile(
+                        title: Text('Switch for Title'),
+                        value: formProvider.isTitleSwitchOn,
+                        onChanged: (bool newValue) {
+                          formProvider.isTitleSwitchOn = newValue;
+                        },
+                      )
+                          : Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          controller: formProvider.titleController,
+                          keyboardType: formProvider.titleInputType,
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            labelText: 'Title',
+                            hintText: 'Enter title here',
+                            border: InputBorder.none,
+                          ),
+                          validator: formProvider.titleValidator,
+                        ),
+                      ),
+                    ),
+
+                    // Dynamic body field
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: formProvider.isBodySwitchOn
+                          ? SwitchListTile(
+                        title: Text('Switch for Body'),
+                        value: formProvider.isBodySwitchOn,
+                        onChanged: (bool newValue) {
+                          formProvider.isBodySwitchOn = newValue;
+                        },
+                      )
+                          : Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          controller: formProvider.bodyController,
+                          keyboardType: formProvider.bodyInputType,
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            labelText: 'Body',
+                            hintText: 'Enter body here',
+                            border: InputBorder.none,
+                          ),
+                          validator: formProvider.bodyValidator,
+                        ),
+                      ),
+                    ),
+
+                    // Submit Button
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (formProvider.formKey.currentState!.validate()) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Form is valid!')),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Form is invalid')),
+                            );
+                          }
+                        },
+                        child: Text('Submit'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

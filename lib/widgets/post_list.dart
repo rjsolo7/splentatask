@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:splentatask/widgets/post_form.dart';
 import '../providers/post_provider.dart';
 
 class PostListScreen extends StatefulWidget {
@@ -78,6 +79,11 @@ class _PostListScreenState extends State<PostListScreen> {
           },
         ),
       ),
+      
+      floatingActionButton:postProvider.hasResult?
+          FloatingActionButton(onPressed: (){    Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>  DynamicFormPage(apiResponse: postProvider.posts,),
+          ));},child: Text("Add"),):SizedBox() ,
     );
   }
 }

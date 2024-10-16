@@ -90,7 +90,7 @@ class ApiService {
   }
 
   // POST request
-  Future<void> submitPost(Map<String, String> formData) async {
+  Future<void> submitPost(Map<String, dynamic> formData) async {
     try {
       final response = await client.post(
         Uri.parse('$_baseUrl/posts'),

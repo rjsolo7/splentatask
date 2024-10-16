@@ -7,6 +7,7 @@ import '../services/api_services.dart';
 class PostProvider extends ChangeNotifier {
   bool isLoading = false;
   bool hasError = false;
+  bool hasResult=false;
   String errorMessage = '';
   List<dynamic> posts = [];
   final ApiService apiService = ApiService();
@@ -23,6 +24,7 @@ class PostProvider extends ChangeNotifier {
       }
 
       posts = await apiService.getPosts();
+      hasResult=true;
       isLoading = false;
     } catch (e) {
       isLoading = false;
@@ -33,7 +35,7 @@ class PostProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> submitForm(Map<String, String> formData) async {
+  Future<void> submitForm(Map<String, dynamic> formData) async {
     isLoading = true;
     notifyListeners();
 
