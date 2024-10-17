@@ -11,13 +11,39 @@ Imagine you receive data from an API that defines a list of form fields dynamica
 
 ## RAJA's Approach is hereby
 
+# Fetching Data through API
 
+1. Executing the get api call, as there is not fixed response, parsed all the key and its values dynamically in the ui
+2. Implemented loader while fetching Api
+3. if error occurs handled exception and displayed the error message
+4. as per the requirement, http interceptor implemented also network connection handled
+5. Retry button, implemented to rehit the fetch api, if any issue persists
 
+Result:
+   With explicit mentioning of the any keyword, dynamically displayed data
 
+# ListView Ui Approach
+   
+1. used map method to parse all the key and values on every objects of the list
+2. used ListView builder and scrollBar
+3. to enhance the ui, custom animated card implemented
+4. added a bottom navigation to navigating to dynamic form page
 
+# Logic behind Dynamic Form Creation
 
+1. There will no fixed keys for the objects, for eg: 1st object can have 2 key, second object can have 3 keys, and the other has only one 
+2. So, Through the api response list processing, figured out all the possible unique keys, duplicates removed.
+3. Hence no keys will be missing, and there will be no duplicate fields as well
+4. Field values can be bool,number,phone,email or simply text.
+5. Based on the value of the particular key, new method implemented to set which type keyboard should populate
+   (eg: if number, number keyboard; if email, email keyboard; if phone, phone number keyboard, )
+6. if value is bool, instead textform field, switch will be displayed in the form
+7. Dynamic Validators: Based on the widget, dynamic validators also generated.
 
-
+Result:
+  Dynamic number of fields within form, and dynamic keyboard detection, dynamic textform or switch implementation, dynamic validator application
+  Hence as per the requirement , all the cases sorted
+   
 
 
 
