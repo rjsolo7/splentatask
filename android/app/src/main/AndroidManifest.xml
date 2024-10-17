@@ -2,7 +2,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:enableOnBackInvokedCallback="true"
-        android:label="splentatask"
+        android:label="Splenta Task"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
