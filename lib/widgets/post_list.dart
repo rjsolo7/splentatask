@@ -50,34 +50,38 @@ class _PostListScreenState extends State<PostListScreen> {
             return AnimatedCard(
               child: Card(
                 elevation: 5,
-                margin: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      contentPadding: const EdgeInsets.all(16),
-                      title: Text(
-                        post['title'],
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18),
-                      ),
-                    ),
-                    const Divider(),  // Divider between title and body
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        post['body'],
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    ),
-                  ],
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: post.entries.map<Widget>((entry) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            entry.key,  // Display the key
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 4),  // Spacing between key and value
+                          Text(
+                            entry.value.toString(),  // Display the value
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          const Divider(),  // Divider between each key-value pair
+                        ],
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
             );
           },
-        ),
+        )
+        ,
       ),
       
       floatingActionButton:postProvider.hasResult?

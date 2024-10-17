@@ -35,7 +35,7 @@ class PostProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> submitForm(Map<String, dynamic> formData) async {
+  Future<void> submitForm(Map<String, dynamic> formData, BuildContext context) async {
     isLoading = true;
     notifyListeners();
 
@@ -45,14 +45,27 @@ class PostProvider extends ChangeNotifier {
         throw Exception('No Internet Connection');
       }
 
+      // Make the post API call
       await apiService.submitPost(formData);
+
       isLoading = false;
+      hasResult = true;  // Mark as successful
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Data added successfully!')),
+      );
     } catch (e) {
       isLoading = false;
       hasError = true;
       errorMessage = e.toString();
-    }
+      notifyListeners();
 
-    notifyListeners();
+      // Show error message if something went wrong
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to add data: $errorMessage')),
+      );
+    }
   }
+
 }
